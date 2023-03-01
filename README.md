@@ -24,10 +24,10 @@ In this project, you can build your own C++ application starting with this repo,
 
 * SDL2-image
   * Linux: 
-    download tar from https://github.com/libsdl-org/SDL_image/releases/tag/release-2.6.3 and open it
+    download tar from https://github.com/libsdl-org/SDL_image/releases/tag/release-2.6.3 and open it\
     `cd SDL2-image-2.6.3`\
     `cmake .. -DCMAKE_BUILD_TYPE=Release`\
-    `cmake --build . --config Release --parallel\`
+    `cmake --build . --config Release --parallel`\
     `sudo cmake --install . --config Release`\
      
   
