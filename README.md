@@ -17,7 +17,20 @@ In this project, you can build your own C++ application starting with this repo,
   * Linux: gcc / g++ is installed by default on most Linux distros
   * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
   * Windows: recommend using [MinGW](http://www.mingw.org/)
+* SDL2
+  * Linux: sudo apt-get install libsdl2-dev
+  * Mac: https://wiki.libsdl.org/SDL2/Installation
+  * Windows: https://wiki.libsdl.org/SDL2/Installation
 
+* SDL2-image
+  * Linux: 
+    download tar from https://github.com/libsdl-org/SDL_image/releases/tag/release-2.6.3 and open it
+    cd SDL2-image-2.6.3
+    cmake .. -DCMAKE_BUILD_TYPE=Release
+    cmake --build . --config Release --parallel
+    sudo cmake --install . --config Release
+     
+  
 ## Basic Build Instructions
 
 1. Clone this repo.
