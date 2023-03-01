@@ -7,11 +7,10 @@
 #include "controller.h"
 #include "render.h"
 
+
 class Game {
 public:
     void Run(Controller &controller, Renderer & renderer);
-
-
 };
 
 

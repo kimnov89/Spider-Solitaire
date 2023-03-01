@@ -9,6 +9,7 @@
 class Controller {
 public:
     void handleInput(bool &running);
+    void CardButton();
 
 };
 
