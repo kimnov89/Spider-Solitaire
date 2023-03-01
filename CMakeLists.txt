@@ -12,8 +12,9 @@ project(SDL2Test)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS} src)
 
-add_executable(SpiderSolitair src/main.cpp render.cpp render.h)
+add_executable(SpiderSolitair src/main.cpp src/render.cpp src/render.h src/game.cpp src/game.h src/controller.cpp src/controller.h)
 string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
-target_link_libraries(SpiderSolitair ${SDL2_LIBRARIES})
+target_link_libraries(SpiderSolitair ${SDL2_LIBRARIES} SDL2_image)
