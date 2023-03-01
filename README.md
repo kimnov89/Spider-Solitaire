@@ -28,7 +28,7 @@ In this project, you can build your own C++ application starting with this repo,
     `cd SDL2-image-2.6.3`\
     `cmake .. -DCMAKE_BUILD_TYPE=Release`\
     `cmake --build . --config Release --parallel`\
-    `sudo cmake --install . --config Release`\
+    `sudo cmake --install . --config Release`
      
   
 ## Basic Build Instructions
