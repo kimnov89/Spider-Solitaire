@@ -12,7 +12,7 @@ public:
     Spider();
     void Init();
     void DrawCard();
-    void moveSequence(int x, int y);
+    void moveSequence(SDL_Point &mousePosition);
     void Update(SDL_Point &mousePos);
     std::vector<Card> CardPool;//8 x 13 spade cards = 104 cards
     std::vector<Card> CardStack;//4x 6 Cards, 6x5 Cards -- 54

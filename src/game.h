@@ -10,7 +10,10 @@
 
 class Game {
 public:
-    void Run(Renderer &renderer, Controller &controller, Spider &spider,  std::size_t target_frame_duration);
+    void Run(Renderer &renderer, Controller &controller,  std::size_t target_frame_duration);
+private:
+    Spider itsyBitsy;
+    SDL_Point mousePosition;
 };
 
 

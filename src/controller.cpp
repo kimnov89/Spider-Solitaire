@@ -18,15 +18,13 @@ void Controller::handleInput(bool &running){
                 if(e.button.button == SDL_BUTTON_LEFT ) {
                     mousePosition={e.motion.x, e.motion.y};
                     std::cout<<"Mouseposition is "<<mousePosition.x<<","<<mousePosition.y<<std::endl;
+                    break;
                 }else{
                     break;
                 }
-                break;
             case SDL_MOUSEBUTTONUP:
                 if(e.button.button == SDL_BUTTON_LEFT){
                     mousePosition = {0,0};
-                }else{
-
                 }
                 break;
         }

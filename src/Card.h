@@ -4,13 +4,13 @@
 class Card {
 public:
     Card();
-    int CardNumber; //Ace to King
-    void cardDim(int x, int y);
+    int CardNumber;
+    void cardDim(int x, int y, int h);
     SDL_Rect cardDim();
     void makeVisible();
     bool getVisibility();
     bool operator<(Card& card){
-        return (CardNumber < card.CardNumber);
+        return (card.CardNumber < CardNumber);
     }
 private:
     SDL_Rect cardDimension;

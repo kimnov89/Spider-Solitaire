@@ -4,8 +4,11 @@
 #include <algorithm>
 #include <random>
 #include <iostream>
+#include <memory>
 
 Spider::Spider(){
+    Init();
+    rowCounter=0;
 }
 
 void Spider::Init() {
@@ -23,14 +26,14 @@ void Spider::Init() {
     }
     //Shuffle all cards
     auto rng = std::default_random_engine{};
-    std::shuffle(std::begin(CardPool),std::end(CardPool),rng);
+    std::shuffle(CardPool.begin(), CardPool.end(),rng);
 
     //Init CardDrawStack with 5 times 10 cards
     //all cards in carddrawstack same coordinates
     Card DrawStackCard;
     for(int i=0; i<50; i++){
         DrawStackCard = CardPool.back();
-        DrawStackCard.cardDim(80,10);
+        DrawStackCard.cardDim(80,10,120);
         CardDrawStack.push_back(DrawStackCard);
         CardPool.pop_back();
     }
@@ -42,11 +45,23 @@ void Spider::Init() {
     for(int j=0; j<4; j++) {
         int x = 80 + j * 90;
         for (int i = 0; i < 6; i++) {
-            stackCard = CardPool.back();
-            int y = 140+i*15;
-            stackCard.cardDim(x, y);
-            CardStack.push_back(stackCard);
-            CardPool.pop_back();
+            if(i == 5) {
+                //card dim of last card with height 120
+                stackCard = CardPool.back();
+                int y = 140 + i * 15;
+                int h = 120;
+                stackCard.cardDim(x, y, h);
+                CardStack.push_back(stackCard);
+                CardPool.pop_back();
+            }else{
+                stackCard = CardPool.back();
+                int y = 140 + i * 15;
+                int h = 15;
+                stackCard.cardDim(x, y, h);
+                CardStack.push_back(stackCard);
+                CardPool.pop_back();
+            }
+
         }
         CardStack.back().makeVisible();
         CardStacks.push_back(CardStack);
@@ -57,11 +72,21 @@ void Spider::Init() {
     for(int j=0; j<6; j++){
         int x = 440 + j *90;
         for(int i=0; i<5; i++){
-            stackCard = CardPool.back();
-            int y = 140+i*15;
-            stackCard.cardDim(x, y);
-            CardStack.push_back(stackCard);
-            CardPool.pop_back();
+            if(i==4) {
+                stackCard = CardPool.back();
+                int y = 140 + i * 15;
+                int h = 120;
+                stackCard.cardDim(x, y, h);
+                CardStack.push_back(stackCard);
+                CardPool.pop_back();
+            }else{
+                stackCard = CardPool.back();
+                int y = 140 + i * 15;
+                int h = 15;
+                stackCard.cardDim(x, y, h);
+                CardStack.push_back(stackCard);
+                CardPool.pop_back();
+            }
         }
         CardStack.back().makeVisible();
         CardStacks.push_back(CardStack);
@@ -74,12 +99,10 @@ void Spider::Init() {
 void Spider::Update(SDL_Point &mousePos) {
     //make rectangle out of carddrawstack card dimensions
     SDL_Rect cardDrawStackDim = CardDrawStack.back().cardDim();
-
     if(SDL_PointInRect(&mousePos,&cardDrawStackDim)){
         DrawCard();
     }else{
-        moveSequence(mousePos.x, mousePos.y);
-
+        moveSequence(mousePos);
     }
 }
 
@@ -88,10 +111,14 @@ void Spider::DrawCard() {
     //carddimensions of card added is carddimension of card in back of stack but y +5
     Card drawStackCard;
     for(int i=0; i<10;i++){
+        int xTopCard = CardStacks[i].back().cardDim().x;
+        int yTopCard = CardStacks[i].back().cardDim().y;
+        CardStacks[i].back().cardDim(xTopCard,yTopCard,15);
         drawStackCard= CardDrawStack.back();
-        int x = CardStacks[i].back().cardDim().x;
-        int y = CardStacks[i].back().cardDim().y+15;
-        drawStackCard.cardDim(x,y);
+        int x = xTopCard;
+        int y = yTopCard+15;
+        int h = 120;
+        drawStackCard.cardDim(x,y,h);
         drawStackCard.makeVisible();
         CardStacks[i].push_back(drawStackCard);
         CardDrawStack.pop_back();
@@ -99,60 +126,59 @@ void Spider::DrawCard() {
     std::cout<<"The card draw stack has "<<CardDrawStack.size()<<" cards left"<<std::endl;
 }
 
-void Spider::moveSequence(int x, int y) {
-    SDL_Point mousePosition = {x, y};
+void Spider::moveSequence(SDL_Point &mousePosition) {
     std::vector<Card> row;
     std::vector<Card> beginningRow;
-    std::vector<Card> *selectedStack=nullptr;
+    std::unique_ptr<std::vector<Card>> selectedStack = std::make_unique<std::vector<Card>>();
     Card selectedCard;
-    std::vector<Card>::iterator iter;
-    int index;
+    int index =-1;
 
     //clicked on one of cards in stack
     auto isSelectedCard = [&](Card &c){ SDL_Rect dim = c.cardDim(); return SDL_PointInRect(&mousePosition,&dim);};
     for(std::vector<Card> cardStack : CardStacks){
-        iter = std::find_if(cardStack.begin(), cardStack.end(), isSelectedCard);
+        auto iter = std::find_if(cardStack.begin(), cardStack.end(), isSelectedCard);
         if(iter!=cardStack.end()) {
-            std::cout << "card stack found" << std::endl;
-            selectedStack = &cardStack;
+            std::cout<<"selected card found"<<std::endl;
+            *selectedStack = cardStack;
             selectedCard = *iter;
-            std::cout<<"The selected card has number "<<selectedStack->back().CardNumber<<std::endl;
+            index = std::distance(selectedStack->begin(), iter);
         }else{
             continue;
         }
     }
-    //delete selectedStack?? -- all pointers in classes deleted??
     Card cardToBeMoved;
     std::vector<Card> rowToBeMoved;
     int topNumber;
     //when selected card is card in back of selected stack then card on top needs to be moved if possible
-    /*if(selectedStack != nullptr) {
-        std::cout<<"The selected card has number "<<selectedCard.CardNumber<<std::endl;
+    if(selectedStack != nullptr && selectedCard.cardDim().x !=0 && index !=-1) {
         if (selectedCard.cardDim().y == selectedStack->back().cardDim().y &&
             selectedCard.CardNumber == selectedStack->back().CardNumber) {
             cardToBeMoved = selectedStack->back();
-            //topNumber = cardToBeMoved.CardNumber + 1;//number of destination card
+            topNumber = cardToBeMoved.CardNumber + 1;//number of destination card
         } else {
             //when selected card is not card on top of selected stack, there is a beginning row
-            //take row and check if it is a full suit from ace to king
-            std::copy(iter, selectedStack->end(), std::back_inserter(row));
-            std::reverse(row.begin(), row.end());
-            if(std::is_sorted(row.begin(),row.end())){
-                bool fullSuit = selectedStack->back().CardNumber == 0 && selectedStack->size() > 13 && (*selectedStack)[selectedStack->size() - 13].CardNumber == 13;
-                if(fullSuit){
+            //take row and check if it is a full suit
+            std::copy(selectedStack->begin()+index, selectedStack->end(), std::back_inserter(row));
+            if (std::is_sorted(row.begin(), row.end())) {
+                bool fullSuit = selectedStack->back().CardNumber == 0 && selectedStack->size() > 13 &&
+                                (*selectedStack)[selectedStack->size() - 13].CardNumber == 13;
+                if (fullSuit) {
                     rowCounter++;
-                    selectedStack->erase(iter,selectedStack->end());
-                    topNumber =-1;
-                }else{
-                    selectedStack->erase(iter,selectedStack->end());
-                    std::copy(iter,selectedStack->end(), std::back_inserter(rowToBeMoved));
-                    topNumber = rowToBeMoved[0].CardNumber +1;
+                    selectedStack->erase(selectedStack->begin()+index, selectedStack->end());
+                    topNumber = -1;
+                } else {
+                    rowToBeMoved = row;
+                    selectedStack->erase(selectedStack->begin()+index, selectedStack->end());
+                    topNumber = rowToBeMoved[0].CardNumber + 1;
                 }
-            }else{
+            } else {
                 //if row is not sorted then card cannot be selected
                 return;
             }
-        }*/
+        }
+    }else{
+        return;
+    }
     /*
     //find CardStack where card on top has number that is +1 of number of firstvisiblecard
     auto foundDest = std::find_if(CardStacks.begin(),CardStacks.end(), [&](std::vector<Card> &stack){return stack.back().CardNumber == topNumber;});

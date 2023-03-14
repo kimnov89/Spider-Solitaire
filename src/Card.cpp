@@ -1,14 +1,15 @@
 #include "Card.h"
 Card::Card() {
     isVisible = false;
+    cardDim(0,0,0);
 };
 
 void Card::makeVisible() {
     isVisible = true;
 }
 
-void Card::cardDim(int x, int y) {
-    cardDimension = {x, y, 80, 120};
+void Card::cardDim(int x, int y, int h) {
+    cardDimension = {x, y, 80, h};
 }
 
 SDL_Rect  Card::cardDim() {
