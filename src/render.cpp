@@ -1,17 +1,19 @@
 #include "render.h"
 #include <vector>
 
-Renderer::Renderer(const std::size_t screenWidth, const std::size_t screenHeight, const std::size_t tileSize): screenWidth(screenWidth), screenHeight(screenHeight), tileSize(tileSize){
+Renderer::Renderer(const std::size_t screenWidth, const std::size_t screenHeight): screenWidth(screenWidth), screenHeight(screenHeight){
     //Initilaize SDL
     if(SDL_Init (SDL_INIT_VIDEO)<0){
         std::cerr<< "SDL could not initialize."<<std::endl;
         std::cerr<< "SDL Error: "<<SDL_GetError()<<std::endl;
+        SDL_Quit();
     }
     //Initialize Image
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags)){
         std::cerr<<"SDL could not initialize PNG."<<std::endl;
         std::cerr<<"SDL Error: "<<IMG_GetError()<<std::endl;
+        IMG_Quit();
     }
 
     //Create Window
@@ -31,27 +33,8 @@ Renderer::Renderer(const std::size_t screenWidth, const std::size_t screenHeight
         std::cerr << "SDL Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
     }
-    //Create texture from image
-    std::string path = "../images/ace.png";
-    sdlTexture = IMG_LoadTexture(sdlRenderer,path.c_str());
-    if (sdlTexture == nullptr) {
-        SDL_DestroyRenderer(sdlRenderer);
-        SDL_DestroyWindow(sdlWindow);
-        std::cerr << "Image could not be loaded." << std::endl;
-        std::cerr << "IMG Error: " <<IMG_GetError() << std::endl;
-        SDL_Quit();
-    }
 
-}
-void Renderer::renderTiles(){
-    int y = 140;
-    std::vector<int> xCoordinates;
-    SDL_RenderClear(sdlRenderer);
-    for(int i =0; i<10; i++){
-        int x = 80 + i*50;
-        xCoordinates.push_back(x);
-        renderTexture(x, y , tileSize, 60);
-    }
+
 }
 
 void Renderer::renderTexture(int x, int y, int width, int height) {
@@ -62,12 +45,82 @@ void Renderer::renderTexture(int x, int y, int width, int height) {
     dst.h = height;
     SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, &dst);
 }
+void Renderer::LoadTexture(std::string path){
+    sdlTexture = IMG_LoadTexture(sdlRenderer,path.c_str());
+    if (sdlTexture == nullptr) {
+        SDL_DestroyRenderer(sdlRenderer);
+        SDL_DestroyWindow(sdlWindow);
+        std::cerr << "Image could not be loaded." << std::endl;
+        std::cerr << "IMG Error: " << IMG_GetError() << std::endl;
+        SDL_Quit();
+    }
+}
+void Renderer::Render(std::vector<std::vector<Card>> &CardStacks, std::vector<Card> &CardDrawStack, int &rowCount){
+    //back of cards for card draw stack
+    SDL_RenderClear(sdlRenderer);
+    //Create texture from image
+    std::string path = "../images/back.png";
+    LoadTexture(path);
 
-void Renderer::Render(){
-        SDL_RenderClear(sdlRenderer);
+    if(!CardDrawStack.empty()) {
         SDL_SetRenderDrawColor(sdlRenderer, 0x1E, 0x1E, 0x1E, 0xFF);
-        renderTiles();
-        SDL_RenderPresent(sdlRenderer);
+        renderTexture(CardDrawStack[0].cardDim().x, CardDrawStack[0].cardDim().y, CardDrawStack[0].cardDim().w,
+                      CardDrawStack[0].cardDim().h);
+    }
+
+    //for each stack in cardStacks render all cards
+    for(auto stack : CardStacks){
+        renderTexture(stack[0].cardDim().x,stack[0].cardDim().y,stack[0].cardDim().w,stack[0].cardDim().h);
+        for(auto card : stack){
+            if(card.getVisibility()) {
+                switch (card.CardNumber) {
+                    case 1:
+                        LoadTexture("../images/ace_of_spades2.png");
+                        break;
+                    case 2:
+                        LoadTexture("../images/2_of_spades.png");
+                        break;
+                    case 3:
+                        LoadTexture("../images/3_of_spades.png");
+                        break;
+                    case 4:
+                        LoadTexture("../images/4_of_spades.png");
+                        break;
+                    case 5:
+                        LoadTexture("../images/5_of_spades.png");
+                        break;
+                    case 6:
+                        LoadTexture("../images/6_of_spades.png");
+                        break;
+                    case 7:
+                        LoadTexture("../images/7_of_spades.png");
+                        break;
+                    case 8:
+                        LoadTexture("../images/8_of_spades.png");
+                        break;
+                    case 9:
+                        LoadTexture("../images/9_of_spades.png");
+                        break;
+                    case 10:
+                        LoadTexture("../images/10_of_spades.png");
+                        break;
+                    case 11:
+                        LoadTexture("../images/jack_of_spades2.png");
+                        break;
+                    case 12:
+                        LoadTexture("../images/queen_of_spades2.png");
+                        break;
+                    case 13:
+                        LoadTexture("../images/king_of_spades2.png");
+                        break;
+                }
+            }else{
+                LoadTexture("../images/back.png");
+            }
+            renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h);
+        }
+    }
+    SDL_RenderPresent(sdlRenderer);
 }
 
 Renderer::~Renderer(){

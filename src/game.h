@@ -6,11 +6,11 @@
 #define GAME_H
 #include "controller.h"
 #include "render.h"
-
+#include "Spider.h"
 
 class Game {
 public:
-    void Run(Controller &controller, Renderer & renderer);
+    void Run(Renderer &renderer, Controller &controller, Spider &spider,  std::size_t target_frame_duration);
 };
 
 

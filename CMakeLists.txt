@@ -15,5 +15,6 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIR} src)
 
-add_executable(SpiderSolitair src/main.cpp src/render.cpp src/render.h src/game.cpp src/game.h src/controller.cpp src/controller.h)
-target_link_libraries(SpiderSolitair ${SDL2_LIBRARIES} SDL2_image::SDL2_image)
+add_executable(SpiderSolitair src/main.cpp src/render.cpp src/render.h src/game.cpp src/game.h src/controller.cpp src/controller.h src/Spider.cpp src/Spider.h src/Card.cpp src/Card.h)
+#target_link_libraries(SpiderSolitair ${SDL2_LIBRARIES} SDL2_image::SDL2_image) when sdl2 and sdl2_image from source
+target_link_libraries(SpiderSolitair ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})

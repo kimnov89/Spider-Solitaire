@@ -1,35 +1,32 @@
-//
-// Created by kim on 27-2-23.
-//
 #include "SDL.h"
 #include "controller.h"
+#include <iostream>
 void Controller::handleInput(bool &running){
+    //check if clicked on CardRect --> triggers random card on 10 cardstacks in update()
+    //check if card dragged on top of another
     SDL_Event e;
+    SDL_Point mousePos;
     while(SDL_PollEvent(&e)){
-        SDL_Rect CardRect = {80,100,40,60};
-        SDL_Rect* selectedRect;
-        bool leftMouseButtonDown = false;
-        SDL_Point mousePos;
         switch(e.type){
             case SDL_QUIT:
                 running = false;
                 break;
-            case SDL_MOUSEMOTION:
+            /*case SDL_MOUSEMOTION:
                 mousePos = {e.motion.x, e.motion.y};
-                break;
-            case SDL_MOUSEBUTTONUP:
-                if(leftMouseButtonDown && e.button.button == SDL_BUTTON_LEFT){
-                    leftMouseButtonDown = false;
-                    selectedRect = nullptr;
+                break;*/
+            case SDL_MOUSEBUTTONDOWN :
+                if(e.button.button == SDL_BUTTON_LEFT ) {
+                    mousePosition={e.motion.x, e.motion.y};
+                    std::cout<<"Mouseposition is "<<mousePosition.x<<","<<mousePosition.y<<std::endl;
+                }else{
+                    break;
                 }
                 break;
-            case SDL_MOUSEBUTTONDOWN:
-                if(!leftMouseButtonDown && e.button.button == SDL_BUTTON_LEFT){
-                    leftMouseButtonDown = true;
-                    if (SDL_PointInRect(&mousePos,&CardRect)){
-                        selectedRect = &CardRect;
-                        break;
-                    }
+            case SDL_MOUSEBUTTONUP:
+                if(e.button.button == SDL_BUTTON_LEFT){
+                    mousePosition = {0,0};
+                }else{
+
                 }
                 break;
         }
