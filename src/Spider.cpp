@@ -129,28 +129,32 @@ void Spider::DrawCard() {
 void Spider::moveSequence(SDL_Point &mousePosition) {
     std::vector<Card> row;
     std::vector<Card> beginningRow;
-    std::unique_ptr<std::vector<Card>> selectedStack = std::make_unique<std::vector<Card>>();
+    std::vector<Card>* selectedStack = nullptr;
     Card selectedCard;
     int index =-1;
 
     //clicked on one of cards in stack
     auto isSelectedCard = [&](Card &c){ SDL_Rect dim = c.cardDim(); return SDL_PointInRect(&mousePosition,&dim);};
-    for(std::vector<Card> cardStack : CardStacks){
+    for(std::vector<Card>& cardStack : CardStacks){
         auto iter = std::find_if(cardStack.begin(), cardStack.end(), isSelectedCard);
         if(iter!=cardStack.end()) {
             std::cout<<"selected card found"<<std::endl;
-            *selectedStack = cardStack;
+            selectedStack = &cardStack;
             selectedCard = *iter;
             index = std::distance(selectedStack->begin(), iter);
-        }else{
-            continue;
+            break;
         }
     }
+
     Card cardToBeMoved;
     std::vector<Card> rowToBeMoved;
     int topNumber;
     //when selected card is card in back of selected stack then card on top needs to be moved if possible
-    if(selectedStack != nullptr && selectedCard.cardDim().x !=0 && index !=-1) {
+    if (selectedStack != nullptr) {
+        if (selectedStack->empty()) {
+            std::cerr << "Selected stack is empty. This should not happen\n";
+            return;
+        }
         if (selectedCard.cardDim().y == selectedStack->back().cardDim().y &&
             selectedCard.CardNumber == selectedStack->back().CardNumber) {
             cardToBeMoved = selectedStack->back();
@@ -166,10 +170,16 @@ void Spider::moveSequence(SDL_Point &mousePosition) {
                     rowCounter++;
                     selectedStack->erase(selectedStack->begin()+index, selectedStack->end());
                     topNumber = -1;
+                    std::cout << "Full suite found\n";
                 } else {
                     rowToBeMoved = row;
                     selectedStack->erase(selectedStack->begin()+index, selectedStack->end());
+
+                    if (rowToBeMoved.empty()) {
+                        std::cerr << "RowToBeMoved is empty. This should not have happened\n";
+                    }
                     topNumber = rowToBeMoved[0].CardNumber + 1;
+                    std::cout << "Part of suit found, starting at " << rowToBeMoved[0].CardNumber << "\n";
                 }
             } else {
                 //if row is not sorted then card cannot be selected

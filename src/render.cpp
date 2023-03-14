@@ -46,6 +46,10 @@ void Renderer::renderTexture(int x, int y, int width, int height) {
     SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, &dst);
 }
 void Renderer::LoadTexture(std::string path){
+    if (sdlTexture != nullptr)
+    {
+        SDL_DestroyTexture(sdlTexture);
+    }
     sdlTexture = IMG_LoadTexture(sdlRenderer,path.c_str());
     if (sdlTexture == nullptr) {
         SDL_DestroyRenderer(sdlRenderer);
@@ -55,7 +59,7 @@ void Renderer::LoadTexture(std::string path){
         SDL_Quit();
     }
 }
-void Renderer::Render(std::vector<std::vector<Card>> &CardStacks, std::vector<Card> &CardDrawStack, int &rowCount){
+void Renderer::Render(const std::vector<std::vector<Card>> &CardStacks, const std::vector<Card> &CardDrawStack, int rowCount){
     SDL_RenderClear(sdlRenderer);
     std::string path = "../images/back.png";
     if(!CardDrawStack.empty()) {
@@ -66,7 +70,7 @@ void Renderer::Render(std::vector<std::vector<Card>> &CardStacks, std::vector<Ca
     }
 
     //for each stack in cardStacks render all cards
-    for(auto stack : CardStacks){
+    for(const auto& stack : CardStacks){
         for(auto card : stack){
             if(card.getVisibility()) {
                 switch (card.CardNumber) {
@@ -119,6 +123,7 @@ void Renderer::Render(std::vector<std::vector<Card>> &CardStacks, std::vector<Ca
     }
     SDL_RenderPresent(sdlRenderer);
     SDL_DestroyTexture(sdlTexture);
+    sdlTexture = nullptr;
 }
 
 Renderer::~Renderer(){

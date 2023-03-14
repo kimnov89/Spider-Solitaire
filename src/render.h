@@ -12,7 +12,7 @@ class Renderer {
 public:
     Renderer(const std::size_t screenWidth, const std::size_t screenHeight);
     ~Renderer();
-    void Render(std::vector<std::vector<Card>> &CardStacks, std::vector<Card> &CardDrawStack, int &rowCount);
+    void Render(const std::vector<std::vector<Card>> &CardStacks, const std::vector<Card> &CardDrawStack, int rowCount);
     void LoadTexture(std::string path);
 private:
     SDL_Window* sdlWindow;//freed in destructor

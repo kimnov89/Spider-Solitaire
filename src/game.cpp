@@ -11,7 +11,7 @@ void Game::Run(Renderer & renderer, Controller &controller, std::size_t target_f
         controller.handleInput(running);
         //update spider deck with mousepoint
         itsyBitsy.Update(controller.mousePosition);
-        //renderer.Render(spider.CardStacks, spider.CardDrawStack, spider.rowCounter);//take cardstacks, carddrawstack, rowCounter
+        renderer.Render(itsyBitsy.CardStacks, itsyBitsy.CardDrawStack, itsyBitsy.rowCounter);//take cardstacks, carddrawstack, rowCounter
 
         frame_end = SDL_GetTicks();
 
