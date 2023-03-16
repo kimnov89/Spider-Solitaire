@@ -19,8 +19,8 @@ private:
     SDL_Renderer* sdlRenderer;//freed in destructor
     const std::size_t screenWidth;
     const std::size_t screenHeight;
-    SDL_Texture* sdlTexture;//freed in function
-    void renderTexture(int x, int y , int width, int height);
+    void renderTexture(int x, int y , int width, int height, SDL_Texture *txtr);
     std::map<int, std::string> cardDeck;
     std::vector<std::map<int, std::string>> cardPool;
+    std::map<int, SDL_Texture*> imageTextures;
 };
