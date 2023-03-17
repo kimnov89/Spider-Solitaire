@@ -48,7 +48,7 @@ Renderer::Renderer(const std::size_t screenWidth, const std::size_t screenHeight
     }
     std::sort(imgNames.begin(),imgNames.end(),[](const std::string &a, const std::string &b){return a<b;});
     for(int i=0;i<imgNames.size();i++) {
-        imgTexture = IMG_LoadTexture(sdlRenderer,path.c_str());
+        imgTexture = IMG_LoadTexture(sdlRenderer,(path+imgNames[i]).c_str());
         if (imgTexture == nullptr) {
             SDL_DestroyRenderer(sdlRenderer);
             SDL_DestroyWindow(sdlWindow);
@@ -79,57 +79,61 @@ void Renderer::Render(const std::vector<std::vector<Card>> &CardStacks, const st
                       CardDrawStack[0].cardDim().h,textureBackImg);
     }
 
+    //the width and height of the rendered cards needs to be the same as the cards from the card draw stack. otherwise the image of the cards will be rendered
+    //in the smaller dimensions of the bottom
+    int width = CardDrawStack[0].cardDim().w;
+    int height = CardDrawStack[0].cardDim().h;
     //for each stack in cardStacks render all cards
-    /*for(const auto& stack : CardStacks){
+    for(const auto& stack : CardStacks){
         for(auto card : stack){
             if(card.getVisibility()) {
                 switch (card.CardNumber) {
                     case 1:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h,imageTextures[0]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width,height,imageTextures[0]);
                         break;
                     case 2:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h,imageTextures[1]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height,imageTextures[1]);
                         break;
                     case 3:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h,imageTextures[2]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height,imageTextures[2]);
                         break;
                     case 4:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h,imageTextures[3]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height,imageTextures[3]);
                         break;
                     case 5:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h,imageTextures[4]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height,imageTextures[4]);
                         break;
                     case 6:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h, imageTextures[5]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height, imageTextures[5]);
                         break;
                     case 7:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h, imageTextures[6]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height, imageTextures[6]);
                         break;
                     case 8:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h, imageTextures[7]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height, imageTextures[7]);
                         break;
                     case 9:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h, imageTextures[8]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height, imageTextures[8]);
                         break;
                     case 10:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h, imageTextures[9]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height, imageTextures[9]);
                         break;
                     case 11:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h, imageTextures[10]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height, imageTextures[10]);
                         break;
                     case 12:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h, imageTextures[11]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height, imageTextures[11]);
                         break;
                     case 13:
-                        renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h, imageTextures[12]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height, imageTextures[12]);
                         break;
                 }
             }else{
-                renderTexture(card.cardDim().x, card.cardDim().y, card.cardDim().w,card.cardDim().h,textureBackImg);
+                renderTexture(card.cardDim().x, card.cardDim().y, width, height,textureBackImg);
             }
 
         }
-    }*/
+    }
     SDL_RenderPresent(sdlRenderer);
 }
 

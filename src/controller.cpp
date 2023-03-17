@@ -5,7 +5,7 @@ void Controller::handleInput(bool &running){
     //check if clicked on CardRect --> triggers random card on 10 cardstacks in update()
     //check if card dragged on top of another
     SDL_Event e;
-    SDL_Point mousePos;
+    //bool leftMouseButtonDown = false;
     while(SDL_PollEvent(&e)){
         switch(e.type){
             case SDL_QUIT:
