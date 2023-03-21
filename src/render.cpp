@@ -85,11 +85,11 @@ void Renderer::Render(const std::vector<std::vector<Card>> &CardStacks, const st
     int height = CardDrawStack[0].cardDim().h;
     //for each stack in cardStacks render all cards
     for(const auto& stack : CardStacks){
-        for(auto card : stack){
+        for(auto &card : stack){
             if(card.getVisibility()) {
                 switch (card.CardNumber) {
                     case 1:
-                        renderTexture(card.cardDim().x, card.cardDim().y, width,height,imageTextures[0]);
+                        renderTexture(card.cardDim().x, card.cardDim().y, width, height,imageTextures[0]);
                         break;
                     case 2:
                         renderTexture(card.cardDim().x, card.cardDim().y, width, height,imageTextures[1]);

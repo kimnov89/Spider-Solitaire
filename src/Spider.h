@@ -1,7 +1,3 @@
-//
-// Created by kim on 7-3-23.
-//
-
 #ifndef SDL2TEST_SPIDER_H
 #define SDL2TEST_SPIDER_H
 #include "Card.h"

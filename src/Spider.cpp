@@ -99,7 +99,8 @@ void Spider::Init() {
 void Spider::Update(SDL_Point &mousePos) {
     //make rectangle out of carddrawstack card dimensions
     SDL_Rect cardDrawStackDim = CardDrawStack.back().cardDim();
-    if(SDL_PointInRect(&mousePos,&cardDrawStackDim)){
+    bool mouseInCardDrawStack = SDL_PointInRect(&mousePos,&cardDrawStackDim);
+    if(mouseInCardDrawStack){
         DrawCard();
     }else{
         moveSequence(mousePos);
@@ -141,6 +142,7 @@ void Spider::moveSequence(SDL_Point &mousePosition) {
             std::cout<<"selected card found"<<std::endl;
             selectedStack = &cardStack;
             selectedCard = *iter;
+            std::cout<<"The selected card is "<<selectedCard.CardNumber<<std::endl;
             index = std::distance(selectedStack->begin(), iter);
             break;
         }
@@ -155,8 +157,7 @@ void Spider::moveSequence(SDL_Point &mousePosition) {
             std::cerr << "Selected stack is empty. This should not happen\n";
             return;
         }
-        if (selectedCard.cardDim().y == selectedStack->back().cardDim().y &&
-            selectedCard.CardNumber == selectedStack->back().CardNumber) {
+        if (selectedCard.cardDim().y == selectedStack->back().cardDim().y && selectedCard.cardDim().h == selectedStack->back().cardDim().h && selectedCard.CardNumber == selectedStack->back().CardNumber) {
             cardToBeMoved = selectedStack->back();
             topNumber = cardToBeMoved.CardNumber + 1;//number of destination card
         } else {
@@ -164,6 +165,7 @@ void Spider::moveSequence(SDL_Point &mousePosition) {
             //take row and check if it is a full suit
             std::copy(selectedStack->begin()+index, selectedStack->end(), std::back_inserter(row));
             if (std::is_sorted(row.begin(), row.end())) {
+                //TODO: full suit too eraly when clicking on King
                 bool fullSuit = selectedStack->back().CardNumber == 0 && selectedStack->size() > 13 &&
                                 (*selectedStack)[selectedStack->size() - 13].CardNumber == 13;
                 if (fullSuit) {
@@ -189,31 +191,58 @@ void Spider::moveSequence(SDL_Point &mousePosition) {
     }else{
         return;
     }
-    /*
+
     //find CardStack where card on top has number that is +1 of number of firstvisiblecard
     auto foundDest = std::find_if(CardStacks.begin(),CardStacks.end(), [&](std::vector<Card> &stack){return stack.back().CardNumber == topNumber;});
     if(foundDest == CardStacks.end()){
         return;
     }
-    auto& destStack = foundDest;
+    auto destStack = &(*foundDest);
     //add card or row to destination stack
     //if row to be moved is empty and topNumber is not -1, just a card needs to be moved
     //if row to be moved is empty and topnumber is -1 then a full suit was found and nothing needs to be moved
     //if row to be moved not empty then row needs to be moved
+    std::cout<<"The top card on the selected stack is now "<<selectedStack->back().CardNumber<<std::endl;
+    std::cout<<"The top card on the destination stack is now "<<destStack->back().CardNumber<<std::endl;
+    //coordinates of cards need to be changed when moved -- cardToBeMoved needs dimensions of top card on dest stack with y dimension+15
+    int yMovingCard = destStack->back().cardDim().y +15;
+    int xMovingCard = destStack->back().cardDim().x;
+    int hMovingCard = 120;
+    int hTopCardDestStack = 15;
+    int hTopCardSelectedStack = 120;
     if(rowToBeMoved.empty()){
         if(topNumber ==-1){
             return;
         }else {
+            destStack->back().cardDim(destStack->back().cardDim().x,destStack->back().cardDim().y,hTopCardDestStack);
+            cardToBeMoved.cardDim(xMovingCard,yMovingCard,hMovingCard);
             destStack->push_back(cardToBeMoved);
             selectedStack->pop_back();
+            selectedStack->back().cardDim(selectedStack->back().cardDim().x,selectedStack->back().cardDim().y,hTopCardSelectedStack);
         }
     }else{
+        for(int i = 0; i<=rowToBeMoved.size();i++){
+            if(i == rowToBeMoved.size()-1){
+                int y = destStack->back().cardDim().y + 15 + i * 15;
+                int h = 120;
+                int x = destStack->back().cardDim().x;
+                rowToBeMoved[i].cardDim(x, y, h);
+            }else{
+                int y = destStack->back().cardDim().y + 15 + i * 15;
+                int h = 15;
+                int x = destStack->back().cardDim().x;
+                rowToBeMoved[i].cardDim(x, y, h);
+            }
+        }
         destStack->insert(destStack->end(),rowToBeMoved.begin(),rowToBeMoved.end());
+        selectedStack->pop_back();
+        selectedStack->back().cardDim(selectedStack->back().cardDim().x,selectedStack->back().cardDim().y,hTopCardSelectedStack);
     }
     //when everything is moved the card which is now on top of the selectedStack needs to be visible
+    //TODO: When full suit selected stack is empty and sigabrt
     if(!(selectedStack->back().getVisibility())) {
         selectedStack->back().makeVisible();
-    }*/
+    }
 }
 
 
