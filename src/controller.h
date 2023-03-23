@@ -7,7 +7,7 @@ class Controller {
 public:
     void handleInput(bool &running);
     SDL_Point mousePosition;
-    bool isReleased = false;
+    bool leftMouseButtonDown = false;
 };
 
 

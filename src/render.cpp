@@ -81,7 +81,7 @@ void Renderer::Render(const std::vector<std::vector<Card>> &CardStacks, const st
 
     //the width and height of the rendered cards needs to be the same as the cards from the card draw stack. otherwise the image of the cards will be rendered
     //in the smaller dimensions of the bottom
-    int width = CardDrawStack[0].cardDim().w;
+    int width =  CardDrawStack[0].cardDim().w;
     int height = CardDrawStack[0].cardDim().h;
     //for each stack in cardStacks render all cards
     for(const auto& stack : CardStacks){

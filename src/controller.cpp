@@ -5,7 +5,7 @@ void Controller::handleInput(bool &running){
     //check if clicked on CardRect --> triggers random card on 10 cardstacks in update()
     //check if card dragged on top of another
     SDL_Event e;
-    bool leftMouseButtonDown = false;
+    mousePosition = {0, 0};
     while(SDL_PollEvent(&e)){
         switch(e.type){
             case SDL_QUIT:
@@ -13,16 +13,18 @@ void Controller::handleInput(bool &running){
                 break;
             case SDL_MOUSEBUTTONDOWN :
                 if( e.button.button == SDL_BUTTON_LEFT ) {
-                    SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
+                    leftMouseButtonDown = true;
                     std::cout<<"Mouseposition is "<<mousePosition.x<<","<<mousePosition.y<<std::endl;
                     break;
                 }else{
                     break;
                 }
             case SDL_MOUSEBUTTONUP:
-                if(e.button.button == SDL_BUTTON_LEFT) {
+                if(e.button.button == SDL_BUTTON_LEFT && leftMouseButtonDown) {
                     std::cout << "mouse button up detected"<<std::endl;
-                    mousePosition = {0, 0};
+                    SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
+                    leftMouseButtonDown = false;
+
                 }
                 break;
         }

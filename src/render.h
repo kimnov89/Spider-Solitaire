@@ -13,7 +13,6 @@ public:
     Renderer(const std::size_t screenWidth, const std::size_t screenHeight);
     ~Renderer();
     void Render(const std::vector<std::vector<Card>> &CardStacks, const std::vector<Card> &CardDrawStack, int rowCount);
-    void LoadTexture(std::string path);
 private:
     SDL_Window* sdlWindow;//freed in destructor
     SDL_Renderer* sdlRenderer;//freed in destructor
