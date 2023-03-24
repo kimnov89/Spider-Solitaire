@@ -1,4 +1,4 @@
-
+#pragma once
 #include<iostream>
 #include <string>
 #include <vector>
@@ -6,13 +6,13 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "Card.h"
-
+#include "Stack.h"
 
 class Renderer {
 public:
     Renderer(const std::size_t screenWidth, const std::size_t screenHeight);
     ~Renderer();
-    void Render(const std::vector<std::vector<Card>> &CardStacks, const std::vector<Card> &CardDrawStack, int rowCount);
+    void Render(const std::vector<Stack> &CardStacks, const std::vector<Stack> &CardDrawStack, int rowCount);
 private:
     SDL_Window* sdlWindow;//freed in destructor
     SDL_Renderer* sdlRenderer;//freed in destructor

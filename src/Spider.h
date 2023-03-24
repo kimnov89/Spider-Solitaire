@@ -1,5 +1,4 @@
-#ifndef SDL2TEST_SPIDER_H
-#define SDL2TEST_SPIDER_H
+#pragma once
 #include "Card.h"
 #include "Stack.h"
 #include <vector>
@@ -17,6 +16,3 @@ public:
     std::vector<Card> SpadeDeck;
     int rowCounter;
 };
-
-
-#endif //SDL2TEST_SPIDER_H

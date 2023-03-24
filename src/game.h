@@ -1,9 +1,4 @@
-//
-// Created by kim on 27-2-23.
-//
-
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 #include "controller.h"
 #include "render.h"
 #include "Spider.h"
@@ -15,6 +10,3 @@ private:
     Spider itsyBitsy;
     SDL_Point mousePosition;
 };
-
-
-#endif GAME_H

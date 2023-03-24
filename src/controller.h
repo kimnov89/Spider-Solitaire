@@ -1,5 +1,4 @@
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#pragma once
 #include <vector>
 #include "SDL.h"
 
@@ -9,6 +8,3 @@ public:
     SDL_Point mousePosition;
     bool leftMouseButtonDown = false;
 };
-
-
-#endif CONTROLLER_H

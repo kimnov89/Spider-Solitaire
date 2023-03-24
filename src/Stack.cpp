@@ -1,7 +1,3 @@
-//
-// Created by kim on 21-3-23.
-//
-
 #include "Stack.h"
 void Stack::AddCard(Card c) {
     stack.emplace_back(c);
@@ -11,7 +7,7 @@ void Stack::AddCard(Card c) {
 void Stack::UpdateCoordinates() {
     for (int i = 0; i < stack.size(); i++) {
         int y = yCoord + i * 15;
-        stack[i].cardDim(xCoord, y, i==stack.size() ? 120 : 15);
+        stack[i].cardDim(xCoord, y, i == stack.size()-1 ? 120 : 15);
     }
 }
 
@@ -36,3 +32,9 @@ void Stack::RemoveCards(int count) {
     }
 
 }
+
+void Stack::AddCardWithStackCoord(Card c) const {
+    c.cardDim(xCoord,yCoord,15);
+}
+
+

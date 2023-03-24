@@ -1,8 +1,4 @@
-#include <iostream>
-#include "controller.h"
 #include "game.h"
-#include "Spider.h"
-#include "Card.h"
 #include <algorithm>
 
 int main() {
