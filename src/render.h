@@ -12,7 +12,7 @@ class Renderer {
 public:
     Renderer(const std::size_t screenWidth, const std::size_t screenHeight);
     ~Renderer();
-    void Render(const std::vector<Stack> &CardStacks, const std::vector<Stack> &CardDrawStack, int rowCount);
+    void Render(const std::vector<Stack> &CardStacks, const Stack &CardDrawStack, int rowCount);
 private:
     SDL_Window* sdlWindow;//freed in destructor
     SDL_Renderer* sdlRenderer;//freed in destructor

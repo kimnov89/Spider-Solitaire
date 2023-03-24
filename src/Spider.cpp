@@ -30,15 +30,14 @@ void Spider::Init() {
 
     //Init CardDrawStack with 5 times 10 cards, vector of 5 stacks a 10 cards , cards same coordinates as stack, stack yCoordinates = y + j*15
     //stack.back() h coord 15 or 120
-    for(int j=0; j<5; j++) {
-        int x = 10 + j * 15;
-        CardDrawStack.setBeginCoord(x, 10);
-        for (int i = 0; i < 10; i++) {
-            Card DrawStackCard = CardPool.back();
-            CardDrawStack.AddCardWithStackCoord(DrawStackCard);
-            CardPool.pop_back();
-        }
+    for(int j=0; j<50; j++) {
+        Card drawStackCard = CardPool.back();
+        CardDrawStack.setBeginCoord(80, 10);
+        CardDrawStack.AddCard(drawStackCard);
+        CardPool.pop_back();
     }
+    CardDrawStack.UpdateCoordinates();
+    std::cout<<"The card draw stack has "<<CardDrawStack.stack.size()<<" cards"<<std::endl;
     //card on top which is in the back of one of the card stacks is visible
     //CardStacks is a vector of 10x CardStack -- 4 of size 6, 6 of size 5
     //cards in CardStacks[0] same coord, cards in CardStacks[1] same coord etc.
@@ -46,25 +45,26 @@ void Spider::Init() {
     for(int j=0; j<10; j++) {
         int x = 80 + j * 90;
         Stack CardStack;
-        CardStack.setBeginCoord(x,140);
+        CardStack.setBeginCoord(x,180);
         int nrCards =5;
-        if(j<=4) {
+        if(j<=3) {
             nrCards = 6;
         }
-            for (int i = 0; i < nrCards; i++) {
-                Card stackCard = CardPool.back();
-                CardStack.AddCard(stackCard);
-                CardPool.pop_back();
-            }
+        for (int i = 0; i < nrCards; i++) {
+            Card stackCard = CardPool.back();
+            CardStack.AddCard(stackCard);
+            CardPool.pop_back();
+        }
         CardStack.stack.back().makeVisible();
         CardStacks.emplace_back(CardStack);
     }
 }
-//TODO: Change Update and DrawCard with new CardDrawStack
+
 void Spider::Update(SDL_Point &mousePos) {
     //make rectangle out of carddrawstack card dimensions
-    SDL_Rect cardDrawStackDim = CardDrawStack.stack.back().cardDim();
-    bool mouseInCardDrawStack = SDL_PointInRect(&mousePos,&cardDrawStackDim);
+    CardDrawStack.setStackDim();
+    SDL_Rect drawStackRect = CardDrawStack.getStackDim();
+    bool mouseInCardDrawStack = SDL_PointInRect(&mousePos,&drawStackRect);
     if(mouseInCardDrawStack){
         DrawCard();
     }else{
@@ -75,13 +75,17 @@ void Spider::Update(SDL_Point &mousePos) {
 void Spider::DrawCard() {
     //card from carddrawstack to top of each card stack
     //carddimensions of card added is carddimension of card in back of stack but y +5
-    for(int i=0; i<10;i++){
-        Card drawStackCard= CardDrawStack.stack.back();
-        drawStackCard.makeVisible();
-        CardStacks[i].AddCard(drawStackCard);
-        CardDrawStack.stack.pop_back();
+    if(!CardDrawStack.stack.empty()) {
+        for (int i = 0; i < 10; i++) {
+            Card drawStackCard = CardDrawStack.stack.back();
+            drawStackCard.makeVisible();
+            CardStacks[i].AddCard(drawStackCard);
+            CardDrawStack.stack.pop_back();
+        }
+        CardDrawStack.AdjustHeight();
+        std::cout<<"The card draw stack has "<<CardDrawStack.stack.size()<<" cards left"<<std::endl;
     }
-    std::cout<<"The card draw stack has "<<CardDrawStack.stack.size()<<" cards left"<<std::endl;
+
 }
 
 void Spider::moveSequence(SDL_Point &mousePosition) {
@@ -179,15 +183,15 @@ void Spider::moveSequence(SDL_Point &mousePosition) {
         }
     }else{
         if(topNumber == -1 && !(emptyDest == CardStacks.end())){
-            for(int i = 0; i<=rowToBeMoved.size();i++){
-                emptyDest->AddCard(rowToBeMoved.front());
+            for(int i = 0; i< rowToBeMoved.size();i++){
+                emptyDest->AddCard(rowToBeMoved[i]);
                 selectedStack->RemoveCard();
             }
         }else if(topNumber == -1 && emptyDest == CardStacks.end()){
             return;
         }else {
-            for (int i = 0; i <= rowToBeMoved.size(); i++) {
-                destStack->AddCard(rowToBeMoved.front());
+            for (int i = 0; i < rowToBeMoved.size(); i++) {
+                destStack->AddCard(rowToBeMoved[i]);
                 selectedStack->RemoveCard();
             }
         }
