@@ -30,13 +30,13 @@ void Spider::Init() {
 
     //Init CardDrawStack with 5 times 10 cards, vector of 5 stacks a 10 cards , cards same coordinates as stack, stack yCoordinates = y + j*15
     //stack.back() h coord 15 or 120
+    CardDrawStack.setBeginCoord(80, 10);
+    CardDrawStack.setYIncrement(0);
     for(int j=0; j<50; j++) {
         Card drawStackCard = CardPool.back();
-        CardDrawStack.setBeginCoord(80, 10);
         CardDrawStack.AddCard(drawStackCard);
         CardPool.pop_back();
     }
-    CardDrawStack.UpdateCoordinates();
     std::cout<<"The card draw stack has "<<CardDrawStack.stack.size()<<" cards"<<std::endl;
     //card on top which is in the back of one of the card stacks is visible
     //CardStacks is a vector of 10x CardStack -- 4 of size 6, 6 of size 5
@@ -62,14 +62,16 @@ void Spider::Init() {
 
 void Spider::Update(SDL_Point &mousePos) {
     //make rectangle out of carddrawstack card dimensions
-    CardDrawStack.setStackDim();
-    SDL_Rect drawStackRect = CardDrawStack.getStackDim();
-    bool mouseInCardDrawStack = SDL_PointInRect(&mousePos,&drawStackRect);
-    if(mouseInCardDrawStack){
-        DrawCard();
-    }else{
-        moveSequence(mousePos);
+    if(!CardDrawStack.stack.empty()) {
+        SDL_Rect drawStackDim = CardDrawStack.stack.back().cardDim();
+        bool mouseInCardDrawStack = SDL_PointInRect(&mousePos, &drawStackDim);
+        if (mouseInCardDrawStack) {
+            DrawCard();
+            return;
+        }
     }
+
+    moveSequence(mousePos);
 }
 
 void Spider::DrawCard() {
@@ -80,9 +82,8 @@ void Spider::DrawCard() {
             Card drawStackCard = CardDrawStack.stack.back();
             drawStackCard.makeVisible();
             CardStacks[i].AddCard(drawStackCard);
-            CardDrawStack.stack.pop_back();
+            CardDrawStack.RemoveCard(false);
         }
-        CardDrawStack.AdjustHeight();
         std::cout<<"The card draw stack has "<<CardDrawStack.stack.size()<<" cards left"<<std::endl;
     }
 
@@ -97,8 +98,7 @@ void Spider::moveSequence(SDL_Point &mousePosition) {
 
     //full suit check not when clicked but when top card is ace
     for(Stack &stack: CardStacks){
-        bool fullSuit = stack.stack.size()>=13 && std::is_sorted(stack.stack.end()-13, stack.stack.end()) && stack.stack.back().CardNumber ==0 && stack.stack[stack.stack.size()-13].CardNumber ==13;
-        if(fullSuit && stack.stack[stack.stack.size()-13].getVisibility()){
+        if(stack.topCardsAreFullSuit()){
             std::cout<<"Full suit found"<<std::endl;
             stack.RemoveCards(13);
             rowCounter++;

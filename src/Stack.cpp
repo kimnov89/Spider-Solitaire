@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Stack.h"
 
 void Stack::AddCard(Card c) {
@@ -7,8 +8,8 @@ void Stack::AddCard(Card c) {
 
 void Stack::UpdateCoordinates() {
     for (int i = 0; i < stack.size(); i++) {
-        int y = yCoord + i * 15;
-        stack[i].cardDim(xCoord, y, i == stack.size()-1 ? 120 : 15);
+        int y = yCoord + i * yIncrement;
+        stack[i].cardDim(xCoord, y, i == stack.size()-1 ? 120 : yIncrement);
     }
 }
 
@@ -17,11 +18,11 @@ void Stack::setBeginCoord(int x, int y) {
         yCoord = y;
 }
 
-Card Stack::RemoveCard() {
+Card Stack::RemoveCard(bool topCardVisible) {
     Card topCard = stack.back();
     stack.pop_back();
     UpdateCoordinates();
-    if(!stack.empty()){
+    if(!stack.empty()&& topCardVisible){
         stack.back().makeVisible();
     }
     return topCard;
@@ -33,34 +34,19 @@ void Stack::RemoveCards(int count) {
     }
 }
 
-void Stack::AddCardWithStackCoord(Card c) {
-    c.cardDim(xCoord,yCoord,15);
-    stack.emplace_back(c);
+void Stack::setYIncrement(int incr) {
+    yIncrement = incr;
 }
 
-void Stack::AdjustHeight() {
-    stack.back().cardDim(xCoord,yCoord,120);
+bool Stack::topCardsAreFullSuit() const {
+    if (stack.size() < 13)
+        return false;
+
+    bool top13CardsAreSorted = std::is_sorted(stack.end()-13, stack.end());
+    bool top13CardsRangeFromKingToAce = stack.back().CardNumber == 1;
+    bool allCardsAreVisible = stack[stack.size() - 13].getVisibility();
+    bool fullSuit = top13CardsAreSorted && top13CardsRangeFromKingToAce && allCardsAreVisible;
+
+    return fullSuit;
 }
 
-void DrawStack::AddCard(Card c) {
-    stack.emplace_back(c);
-}
-
-void DrawStack::UpdateCoordinates() {
-    for(int i=10; i<stack.size();i+=10){
-        int y = yCoord + i * 5;
-        stack[i].cardDim(xCoord,y,i == stack.size()-1 ? 120 : 15);
-    }
-}
-
-void DrawStack::setStackDim() {
-    int xCoordDrawStack = stack.front().cardDim().x;
-    int yCoordDrawStack = stack.front().cardDim().y;
-    int heightDrawStack = yCoordDrawStack + stack.back().cardDim().h;
-    int widthDrawStack = stack.back().cardDim().w;
-    drawStackDim = {xCoordDrawStack, yCoordDrawStack, heightDrawStack, widthDrawStack};
-}
-
-SDL_Rect DrawStack::getStackDim() {
-    return drawStackDim;
-}

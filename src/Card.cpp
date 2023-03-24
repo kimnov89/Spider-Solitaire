@@ -24,3 +24,7 @@ bool Card::getVisibility() const {
         return isVisible;
 }
 
+int Card::getFullHeight() const {
+    return kFullCardHeight;
+}
+

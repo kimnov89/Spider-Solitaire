@@ -12,7 +12,7 @@ public:
     void Update(SDL_Point &mousePos);
     std::vector<Card> CardPool;//8 x 13 spade cards = 104 cards
     std::vector<Stack> CardStacks;
-    DrawStack CardDrawStack;//50
+    Stack CardDrawStack;//50
     std::vector<Card> SpadeDeck;
     int rowCounter;
 };
